@@ -16,11 +16,11 @@ app.use(express.json());
 // require('./routes/notes')(app);
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Develop/index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 })
 
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Develop/notes.html'));
+    res.sendFile(path.join(__dirname, 'notes.html'));
 })
 
 app.get('/api/notes', (req, res) => {
