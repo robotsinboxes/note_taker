@@ -9,12 +9,14 @@ const db = require('./db/db.json');
 // Set the port
 const PORT = process.env.PORT || 8080;
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+    extended: true
+}));
 app.use(express.static('public'));
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html'));  
+    res.sendFile(path.join(__dirname, './public/index.html'));
 })
 
 app.get('/notes', (req, res) => {
@@ -27,7 +29,7 @@ app.get('/api/notes', (req, res) => {
 
 // POST /api/notes recieves new note to save on request body, add it to db.json and return new note to client. Each note needs a unique id
 app.post('/api/notes', (req, res) => {
-    console.log(req.body); 
+    console.log(req.body);
     // set values for new note, including unique id
     var newNote = {
         id: uniqid(),
@@ -53,7 +55,7 @@ app.delete('/api/notes/:id', (req, res) => {
     // if a matching ID is found in Json object
     if (id === note.id) {
         // take out that line item
-        db.splice(db.indexOf(noteDelete),1);
+        db.splice(db.indexOf(noteDelete), 1);
         fs.writeFile('./db/db.json', JSON.stringify(db), (err) => {
             res.json(db);
         })
@@ -61,6 +63,6 @@ app.delete('/api/notes/:id', (req, res) => {
 })
 
 // create a listener on PORT
-app.listen(PORT, function() {
+app.listen(PORT, function () {
     console.log(`App listening on port ${PORT}`);
 })
