@@ -1,68 +1,87 @@
 // require dependencies express, path. fs & uniqid to create unique IDs for the notes
 const express = require('express');
 const app = express();
+const { promisify } = require('util');
 const fs = require('fs');
 const path = require('path');
-const uniqid = require('uniqid');
-const db = require('./db/db.json');
+const { v4 : uuidv4 } = require('uuid');
+
+let db = fs.readFileSync('./db/db.json');
+let notes = JSON.parse(db);
 
 // Set the port
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3008;
 
+// handles data parsing
 app.use(express.urlencoded({
     extended: true
 }));
 app.use(express.static('public'));
 app.use(express.json());
 
+// GET routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 })
 
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/notes.html'));
+    res.sendFile(path.join(__dirname, './public/notes.html'))
 })
 
-app.get('/api/notes', (req, res) => {
-    return res.json(db);
+app.get('/api/notes', async(req, res) => {
+    try {
+        const asyncReadFile = promisify(fs.readFile);
+        const notes = await asyncReadFile('./db/db.json', 'utf-8'); 
+        if (notes) {
+            console.log(notes);
+            const parsedNotes = JSON.parse(notes);
+            res.json(parsedNotes);
+    }
+    } catch (error) {
+        console.log(error);
+    } 
 })
+
 
 // POST /api/notes recieves new note to save on request body, add it to db.json and return new note to client. Each note needs a unique id
-app.post('/api/notes', (req, res) => {
-    console.log(req.body);
+app.post('/api/notes', async(req, res) => {
     // set values for new note, including unique id
-    var newNote = {
-        id: uniqid(),
-        title: req.body.title,
-        text: req.body.text,
-    };
+    let newNote = req.body;
+    newNote.id = uuidv4();
     // push new note
-    db.push(newNote);
     // write new note to db.json, then stringify the data
-    fs.writeFile('', JSON.stringify(db), (err) => {
-        if (err) throw err;
-        res.json(db);
-    });
-    console.log(db);
-})
-
-// delete note in db.json based on given id
-app.delete('/api/notes/:id', (req, res) => {
-    // grab note id to delete and store in var id
-    let id = req.params.id;
-    // find the note with the assoc id
-    let noteDelete = db.find(note => note.id === id);
-    // if a matching ID is found in Json object
-    if (id === note.id) {
-        // take out that line item
-        db.splice(db.indexOf(noteDelete), 1);
-        fs.writeFile('./db/db.json', JSON.stringify(db), (err) => {
-            res.json(db);
-        })
+    try {
+        const asyncReadFile = promisify(fs.readFile);
+        const notes = await asyncReadFile('./db/db.json', 'utf-8'); 
+        const parsedNotes = JSON.parse(notes);
+        parsedNotes.push(newNote);
+       const asyncWriteFile = promisify(fs.writeFile);
+       const allNotes = await asyncWriteFile('./db/db.json', JSON.stringify(parsedNotes));
+       res.json(allNotes);
+    } catch (error) {
+        console.log(error);
     }
 })
 
+// app.delete('/api/notes/:id', (req, res) => {
+//     const currentNote = req.params.id;
+//     notes = notes.filter(item => item.id != currentNote);
+//     fs.writeFile("./db/db.json", JSON.stringify(notes), function (err) {
+//       if (err) {
+//         console.log(err);
+//       } 
+//       console.log("success");
+//     })
+//     res.json(notes);
+// });
+
+
+// catch all to direct home
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+})
+
 // create a listener on PORT
-app.listen(PORT, function () {
+app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
 })
