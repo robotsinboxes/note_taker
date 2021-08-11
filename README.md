@@ -1,10 +1,12 @@
 ## Note Taker
 
 This app can be used to write and save notes to help you stay organized and 
-keep track of your taskscan be used to write and save notes.
+keep track of your tasks.
 
-Click this link for a video demonstration:
-https://share.getcloudapp.com/xQub15EK?embed=true&amp;branding=true&amp;title=true
+Deployed App:
+https://notetaker-111.herokuapp.com/
+
+Built with HTML/CSS, JavaScript, Express, Uniqid
 
 <img width="1027" alt="Screen Shot 2021-05-16 at 4 42 19 PM" src="https://user-images.githubusercontent.com/69644797/118413629-eed7bc00-b665-11eb-8e22-1b55c73e81e9.png">
 
