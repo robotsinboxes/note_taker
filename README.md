@@ -1,7 +1,7 @@
 ## Note Taker
 
-This app can be used to write and save notes to help you stay organized and 
-keep track of your tasks.
+This app can be used to write, save and delete notes to help you stay organized and 
+keep track of your daily tasks.
 
 Deployed App:
 https://notetaker-111.herokuapp.com/
